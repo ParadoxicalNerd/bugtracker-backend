@@ -1,0 +1,55 @@
+scalar Date
+
+type Project {
+  id: ID
+  name: String
+  description: String
+  author: User
+  associatedUsers: [User]
+  tickets: [Ticket] 
+  creationDate: Date
+  updateDate: Date
+}
+
+type  Ticket {
+  id:ID
+  title: String
+  description: String
+  type: String
+  status: String
+  priority: String
+  project: Project!
+  author: User!
+  assignedTo: User
+  comments: [Comment]
+  changeLog: [String]
+  creationDate: Date
+  updateDate: Date
+}
+
+type User {
+  id:ID
+  name: String
+  email: String
+  type: String
+  ticketsAuthored: [Ticket]
+  createdProjects: [Project]
+  assignedTickets: [Ticket]
+  creationDate: Date
+  updateDate: Date
+}
+
+type Comment {
+  id: ID
+  message: String
+  creationDate: Date
+  author: User
+}
+
+type Query {
+  project(id:ID): Project
+  ticket(id:ID): Ticket
+  user(id:ID): User
+  allProjects:[Project!]
+  allUsers:[User!]
+}
