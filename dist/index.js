@@ -1,66 +1,42 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var apollo_server_1 = require("apollo-server");
-var client_1 = require("@prisma/client");
-var fs = require('fs');
-var path = require('path');
-var dotenv_1 = __importDefault(require("dotenv"));
-var Query_1 = __importDefault(require("./resolvers/Query"));
+const apollo_server_express_1 = require("apollo-server-express");
+const client_1 = require("@prisma/client");
+const express_1 = __importDefault(require("express"));
+const fs = require('fs');
+const path = require('path');
+const dotenv_1 = __importDefault(require("dotenv"));
+const morgan_1 = __importDefault(require("morgan"));
+const cors_1 = __importDefault(require("cors"));
+const resolvers_1 = require("./resolvers");
 dotenv_1.default.config();
-var resolvers = {
-    Query: Query_1.default
-};
-var prisma = new client_1.PrismaClient();
-var server = new apollo_server_1.ApolloServer({
-    typeDefs: fs.readFileSync(path.join(__dirname, '..', 'schema.graphql'), 'utf-8'),
-    resolvers: resolvers,
-    context: function (req) { return (__assign(__assign({}, req), { prisma: prisma })); }
+const prisma = new client_1.PrismaClient();
+const app = express_1.default();
+app.use(morgan_1.default('dev'));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({
+    extended: true
+}));
+app.use(cors_1.default());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
-server
-    .listen({
-    port: 4001
-})
-    .then(function (_a) {
-    var url = _a.url;
-    return console.log("Server is running on " + url);
+app.use('/hi', (_, res) => {
+    res.status(200);
+    res.send("hello");
+    prisma.project.findFirst().tickets;
 });
-// const main = async () => {
-//     const curruser = await prisma.user.findFirst({ where: { name: "Pankaj" } })
-//     await prisma.user.update({
-//         where: { id: curruser!.id },
-//         data: { email: 'stuff' }
-//     })
-//     const allUsers = await prisma.user.findMany()
-//     console.log(allUsers)
-// }
-// main()
-//     .catch(e => {
-//         throw e
-//     })
-//     // 5
-//     .finally(async () => {
-//         await prisma.$disconnect()
-//     })
-// dotenv.config();
-// const PORT = process.env.PORT || 4000;
-// const app: Express = express();
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-// app.get('/', (req: Request, res: Response) => {
-//     res.send('<h1>Hello from the TypeScript world!</h1>');
-// });
-// app.listen(PORT, () => console.log(`Running on ${PORT} ⚡`));
+const typeDefs = fs.readFileSync(path.join(__dirname, '..', 'schema.graphql'), 'utf-8');
+const server = new apollo_server_express_1.ApolloServer({
+    typeDefs,
+    resolvers: resolvers_1.resolvers,
+    context: { prisma }
+});
+server.applyMiddleware({ app });
+app.listen(4000, () => console.log("🚀 Server ready at: http://localhost:4000"));
+//# sourceMappingURL=index.js.map

@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
-    project: function (_parent, args, context) { return (context.prisma.project.findFirst({ where: { id: args.id } })); },
-    ticket: function (_parent, args, context) { return (context.prisma.ticket.findFirst({ where: { id: args.id } })); },
-    user: function (_parent, args, context) { return (context.prisma.user.findFirst({ where: { id: args.id } })); },
-    allProjects: function (_parent, _args, context) { return (context.prisma.project.findMany()); },
-    allUsers: function (_parent, _args, context) { return (context.prisma.user.findMany()); }
+    project: (_parent, args, context) => (context.prisma.project.findFirst({ where: { id: args.id } })),
+    ticket: (_parent, args, context) => (context.prisma.ticket.findFirst({ where: { id: args.id } })),
+    user: (_parent, args, context) => (context.prisma.user.findFirst({ where: { id: args.id } })),
+    allProjects: (_parent, _args, context) => (context.prisma.project.findMany()),
+    allUsers: (_parent, _args, context) => (context.prisma.user.findMany())
 };
+//# sourceMappingURL=Query.js.map

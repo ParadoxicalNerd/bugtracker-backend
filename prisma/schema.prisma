@@ -16,7 +16,7 @@ model Project {
   description String
 
   creationDate DateTime @default(now())
-  updateDate   DateTime @default(now())
+  updateDate   DateTime @default(now()) @updatedAt
 
   // Project Author
   author   User   @relation("ProjectAuthor", fields: [authorID], references: [id])
@@ -60,7 +60,7 @@ model Ticket {
   changeLog   String[]
 
   creationDate DateTime @default(now())
-  updateDate   DateTime @default(now())
+  updateDate   DateTime @default(now()) @updatedAt
 
   // Project ticket belongs to
   project   Project @relation("ProjectTickets", fields: [projectID], references: [id])
@@ -71,8 +71,8 @@ model Ticket {
   authorID String
 
   // Ticket assigned to
-  assignedTo   User   @relation("TicketAssignedTo", fields: [assignedToID], references: [id])
-  assignedToID String
+  assignedTo   User?   @relation("TicketAssignedTo", fields: [assignedToID], references: [id])
+  assignedToID String?
 
   // Comments
   comments Comment[] @relation("CommentsOfTicket")
@@ -92,7 +92,7 @@ model User {
   type  UserType
 
   creationDate DateTime @default(now())
-  updateDate   DateTime @default(now())
+  updateDate   DateTime @default(now()) @updatedAt
 
   ticketsAuthored    Ticket[]  @relation("TicketAuthor")
   createdProjects    Project[] @relation("ProjectAuthor")
