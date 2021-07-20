@@ -90,24 +90,23 @@ let _get_route = express().get("", (req, res, next) => {});
 type get_route_type = Parameters<typeof _get_route>;
 
 const secured = (req: get_route_type[0], res: get_route_type[1], next: get_route_type[2]) => {
-    res.locals.returnTo = "asdfha";
     if (req.user) {
         return next();
     } else {
-        console.log(res.locals.returnTo + "<===");
-        res.redirect("/login");
+        req.session.returnTo = req.originalUrl;
+        res.redirect("/login?fromURL="+req.originalUrl);
     }
 };
 
 app.get("/", (req, res, next) => {
-    res.send('<form action="/successRoute"> <input type="submit" value="Go to login" /> </form>');
+    res.send('<form action="/app"> <input type="submit" value="Go to application" /> </form>');
 });
 
-app.get("/successRoute", secured, (req, res, next) => {
+app.get("/app", secured, (req, res, next) => {
     // console.log("----------------------");
     // console.log(req.user);
-    res.send("You made it!");
-    // res.redirect("http://localhost:8080");
+    // res.send("You made it!");
+    res.redirect("http://localhost:8080");
 });
 
 // Graphql

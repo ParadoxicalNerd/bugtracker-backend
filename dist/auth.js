@@ -9,10 +9,7 @@ const querystring_1 = __importDefault(require("querystring"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const router = express_1.default.Router();
-router.get("/login", passport_1.default.authenticate("auth0", { scope: "openid email profile" }), (req, res, next) => {
-    console.log("===>" + res.locals.returnTo);
-    return res.redirect("/");
-});
+router.get("/login", passport_1.default.authenticate("auth0", { scope: "openid email profile" }));
 router.get("/callback", (req, res, next) => passport_1.default.authenticate("auth0", (err, user, info) => {
     if (err)
         return next(err);
@@ -23,7 +20,7 @@ router.get("/callback", (req, res, next) => passport_1.default.authenticate("aut
             return next(err);
         const returnTo = req.session.returnTo;
         delete req.session.returnTo;
-        console.log(req);
+        console.log(returnTo);
         res.redirect(returnTo || "/");
     });
 })(req, res, next));

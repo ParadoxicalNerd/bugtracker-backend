@@ -56,20 +56,19 @@ passport_1.default.deserializeUser((user, done) => done(null, user));
 app.use(auth_1.default);
 let _get_route = express_1.default().get("", (req, res, next) => { });
 const secured = (req, res, next) => {
-    res.locals.returnTo = "asdfha";
     if (req.user) {
         return next();
     }
     else {
-        console.log(res.locals.returnTo + "<===");
-        res.redirect("/login");
+        req.session.returnTo = req.originalUrl;
+        res.redirect("/login?fromURL=" + req.originalUrl);
     }
 };
 app.get("/", (req, res, next) => {
-    res.send('<form action="/successRoute"> <input type="submit" value="Go to login" /> </form>');
+    res.send('<form action="/app"> <input type="submit" value="Go to application" /> </form>');
 });
-app.get("/successRoute", secured, (req, res, next) => {
-    res.send("You made it!");
+app.get("/app", secured, (req, res, next) => {
+    res.redirect("http://localhost:8080");
 });
 app.use("/graphql", secured, (res, req, next) => next());
 const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
