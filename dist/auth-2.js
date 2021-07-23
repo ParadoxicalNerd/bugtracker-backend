@@ -60,6 +60,7 @@ passport_1.default.deserializeUser((user, done) => done(null, user));
 const router = express_1.Router();
 router.get("/login", passport_1.default.authenticate("auth0", { scope: ["openid", "email", "profile"] }));
 router.get("/callback", passport_1.default.authenticate("auth0", { failureRedirect: "/failure" }), (req, res, next) => {
+    console.log(req.cookies);
     res.redirect("http://localhost:8080/home");
 });
 exports.default = router;
@@ -74,4 +75,4 @@ function secured(req, res, next) {
     }
 }
 exports.secured = secured;
-//# sourceMappingURL=auth.js.map
+//# sourceMappingURL=auth-2.js.map
