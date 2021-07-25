@@ -53,9 +53,15 @@ const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
 app.use(cors(corsOptions));
 
 // Session Config
-// TODO: Use Redis Cache
+
+import Redis from "ioredis";
+
+const RedisStore = require("connect-redis")(expressSession);
+const redisClient = new Redis();
+
 const session: expressSession.SessionOptions = {
-    secret: process.env.SESSION_SECRET!,
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET || "supersecretkey",
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 5, // Five minutes

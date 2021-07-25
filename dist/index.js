@@ -58,8 +58,12 @@ const corsOptions = (req, cb) => {
     cb(null, options);
 };
 app.use(cors_1.default(corsOptions));
+const ioredis_1 = __importDefault(require("ioredis"));
+const RedisStore = require("connect-redis")(express_session_1.default);
+const redisClient = new ioredis_1.default();
 const session = {
-    secret: process.env.SESSION_SECRET,
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET || "supersecretkey",
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 5,
