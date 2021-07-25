@@ -31,7 +31,6 @@ const path = require("path");
 const dotenv_1 = __importDefault(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const express_session_1 = __importDefault(require("express-session"));
 const passport_1 = __importDefault(require("passport"));
 const resolvers_1 = require("./resolvers");
@@ -45,22 +44,37 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({
     extended: true,
 }));
-const corsOptions = {
-    credentials: true,
-    origin: "http://localhost:8080",
+const corsAllowList = ["http://localhost:8080", "http://localhost:4000"];
+const corsOptions = (req, cb) => {
+    const options = {
+        credentials: true,
+    };
+    if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
+        options.origin = true;
+    }
+    else {
+        options.origin = false;
+    }
+    cb(null, options);
 };
 app.use(cors_1.default(corsOptions));
 const session = {
     secret: process.env.SESSION_SECRET,
     cookie: {
-        httpOnly: false,
+        httpOnly: true,
+        maxAge: 1000 * 60 * 5,
     },
     resave: false,
     saveUninitialized: false,
     name: "session-id",
 };
+if (process.env.NODE_ENV == "production") {
+    session.cookie = {
+        domain: process.env.DOMAIN,
+        secure: true,
+    };
+}
 app.use(express_session_1.default(session));
-app.use(cookie_parser_1.default());
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use(auth_1.default);
@@ -70,15 +84,14 @@ app.get("/app", auth_1.secured, (req, res, next) => {
 app.get("/failure", (req, res, next) => {
     res.send("Login unsuccessful");
 });
-app.use("/graphql", (req, res, next) => {
-    console.log(req.cookies);
+app.use("/graphql", auth_1.secured, (req, res, next) => {
     next();
 });
 const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
 const server = new apollo_server_express_1.ApolloServer({
     typeDefs,
     resolvers: resolvers_1.resolvers,
-    context: ({ req }) => ({ prisma: exports.prisma, req }),
+    context: (expressContext) => ({ prisma: exports.prisma, req: expressContext.req }),
 });
 server.applyMiddleware({ app, cors: corsOptions });
 app.use("/hi", (req, res) => {

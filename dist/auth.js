@@ -28,6 +28,7 @@ const passport_auth0_1 = __importDefault(require("passport-auth0"));
 const passport_1 = __importDefault(require("passport"));
 const index_1 = require("./index");
 const client_1 = require("@prisma/client");
+const qs_1 = __importDefault(require("qs"));
 const strategy = new passport_auth0_1.default({
     domain: process.env.AUTH0_DOMAIN,
     clientID: process.env.AUTH0_CLIENT_ID,
@@ -60,7 +61,25 @@ passport_1.default.deserializeUser((user, done) => done(null, user));
 const router = express_1.Router();
 router.get("/login", passport_1.default.authenticate("auth0", { scope: ["openid", "email", "profile"] }));
 router.get("/callback", passport_1.default.authenticate("auth0", { failureRedirect: "/failure" }), (req, res, next) => {
+    res.cookie("session-details", JSON.stringify({
+        loggedIn: true,
+        username: req.user.name,
+    }), { httpOnly: false, maxAge: 1000 * 60 * 5 });
     res.redirect("http://localhost:8080/home");
+});
+router.get("/logout", (req, res, next) => {
+    req.logout();
+    req.session.destroy((err) => {
+        console.log(err);
+    });
+    res.clearCookie("session-details");
+    res.clearCookie("session-id");
+    const logoutURL = new URL(`https://${process.env.AUTH0_DOMAIN}/v2/logout`);
+    logoutURL.search = qs_1.default.stringify({
+        client_id: process.env.AUTH0_CLIENT_ID,
+        returnTo: process.env.HOMEPAGE_URL,
+    });
+    res.redirect(logoutURL);
 });
 exports.default = router;
 let _get_route = express_1.default().get("", (req, res, next) => { });

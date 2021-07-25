@@ -3,7 +3,7 @@ import Auth0Strategy from "passport-auth0";
 import passport from "passport";
 import { prisma } from "./index";
 import { UserType } from "@prisma/client";
-import { nextTick } from "process";
+import QueryString from "qs";
 
 const strategy = new Auth0Strategy(
     {
@@ -51,9 +51,39 @@ router.get(
         // res.send("Hello");
         // res.redirect("/app");
         // console.log(req);
+        res.cookie(
+            "session-details",
+            JSON.stringify({
+                loggedIn: true,
+                // @ts-ignore
+                username: req.user!.name,
+            }),
+            { httpOnly: false, maxAge: 1000 * 60 * 5 }
+        );
+
+        // console.log(req.session);
         res.redirect("http://localhost:8080/home");
     }
 );
+
+router.get("/logout", (req, res, next) => {
+    req.logout();
+    req.session.destroy((err) => {
+        console.log(err);
+    });
+    res.clearCookie("session-details");
+    res.clearCookie("session-id");
+
+    const logoutURL = new URL(`https://${process.env.AUTH0_DOMAIN}/v2/logout`);
+    logoutURL.search = QueryString.stringify({
+        client_id: process.env.AUTH0_CLIENT_ID,
+        returnTo: process.env.HOMEPAGE_URL,
+    });
+
+    // TODO: Fix redirect url error
+    // @ts-expect-error
+    res.redirect(logoutURL);
+});
 
 export default router;
 

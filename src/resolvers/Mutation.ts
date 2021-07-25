@@ -1,4 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+import { Express } from "express";
+import { Context, IRequestUser } from "src/decleration";
 import {
     ProjectCreateInput,
     ProjectUpdateInput,
@@ -7,10 +9,6 @@ import {
     TicketUpdateInput,
     UserCreateInput,
 } from "./MutationTypes";
-
-interface Context {
-    prisma: PrismaClient;
-}
 
 export default {
     createProject: (
@@ -208,11 +206,22 @@ export default {
             data: args.data,
         }),
 
-    updateUser: (_parent: any, args: { userID: string; data: UserCreateInput }, context: Context) =>
-        context.prisma.user.update({
+    updateUser: (_parent: any, args: { data: UserCreateInput }, context: Context) => {
+        const currUser = context.req.user! as User;
+
+        const updatedUser = context.prisma.user.update({
             where: {
-                id: args.userID,
+                id: currUser.id,
             },
-            data: args.data,
-        }),
+            data: {
+                name: args.data.name,
+                email: args.data.email,
+                type: args.data.type,
+            },
+        });
+
+        console.log(updatedUser);
+
+        return updatedUser;
+    },
 };

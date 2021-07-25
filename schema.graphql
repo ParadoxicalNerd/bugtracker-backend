@@ -98,7 +98,7 @@ type Mutation {
     addTicketChangeLog(ticketID: ID!, changeLog: String!): Ticket
     # User related mutations
     createUser(data: UserCreateInput!): User
-    updateUser(userID: ID, data: UserCreateInput): User
+    updateUser(data: UserUpdateInput): User
 }
 
 input ProjectCreateInput {
@@ -127,8 +127,14 @@ input TicketUpdateInput {
 }
 
 input UserCreateInput {
-    # Doubles as user updater
     name: String!
     email: String!
     type: UserType!
+}
+
+input UserUpdateInput {
+    # Doubles as user updater
+    name: String
+    email: String
+    type: UserType
 }

@@ -147,11 +147,20 @@ exports.default = {
     createUser: (_parent, args, context) => context.prisma.user.create({
         data: args.data,
     }),
-    updateUser: (_parent, args, context) => context.prisma.user.update({
-        where: {
-            id: args.userID,
-        },
-        data: args.data,
-    }),
+    updateUser: (_parent, args, context) => {
+        const currUser = context.req.user;
+        const updatedUser = context.prisma.user.update({
+            where: {
+                id: currUser.id,
+            },
+            data: {
+                name: args.data.name,
+                email: args.data.email,
+                type: args.data.type,
+            },
+        });
+        console.log(updatedUser);
+        return updatedUser;
+    },
 };
 //# sourceMappingURL=Mutation.js.map

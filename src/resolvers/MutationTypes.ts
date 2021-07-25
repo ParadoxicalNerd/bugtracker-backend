@@ -58,3 +58,9 @@ export interface UserCreateInput {
     email: string;
     type: UserType;
 }
+
+export interface UserUpdateInput {
+    name?: string;
+    email?: string;
+    type?: UserType;
+}

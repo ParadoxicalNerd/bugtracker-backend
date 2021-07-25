@@ -1,21 +1,18 @@
 import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
 import { PrismaClient } from "@prisma/client";
-import express, { NextFunction } from "express";
+import express from "express";
 
 const fs = require("fs");
 const path = require("path");
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 
 import expressSession from "express-session";
 import passport from "passport";
-import Auth0Strategy from "passport-auth0";
 
 import { resolvers } from "./resolvers";
 import authRouter, { secured } from "./auth";
-import cookieSession from "cookie-session";
 
 dotenv.config();
 
@@ -24,11 +21,6 @@ const PORT = process.env.port || 4000;
 export const prisma = new PrismaClient();
 
 const app = express();
-
-// app.use((req, res, next) => {
-//     console.log(req.headers);
-//     next();
-// });
 
 app.use(morgan("dev"));
 
@@ -41,35 +33,48 @@ app.use(
 );
 
 // CORS
-const corsOptions = {
-    credentials: true,
-    origin: "http://localhost:8080",
+
+const corsAllowList = ["http://localhost:8080", "http://localhost:4000"];
+
+const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
+    const options: cors.CorsOptions = {
+        credentials: true,
+    };
+
+    if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
+        options.origin = true;
+    } else {
+        options.origin = false;
+    }
+
+    cb(null, options);
 };
 
 app.use(cors(corsOptions));
-// app.use(function (req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "http://localhost:8080"); // Client which can access this
-//     // res.header("Vary", "Origin");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     res.header("Access-Control-Allow-Credentials", "true");
-//     next();
-// });
 
 // Session Config
+// TODO: Use Redis Cache
 const session: expressSession.SessionOptions = {
     secret: process.env.SESSION_SECRET!,
     cookie: {
-        httpOnly: false,
-        // domain: "localhost",
+        httpOnly: true,
+        maxAge: 1000 * 60 * 5, // Five minutes
     },
     resave: false,
     saveUninitialized: false,
     name: "session-id",
 };
 
+if (process.env.NODE_ENV == "production") {
+    session.cookie = {
+        domain: process.env.DOMAIN,
+        secure: true,
+    };
+}
+
 app.use(expressSession(session));
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
 // app.use(cookieParser(process.env.SESSION_SECRET));
 
@@ -103,20 +108,8 @@ app.use(passport.session());
 
 app.use(authRouter);
 
-// app.use((req, res, next) => {
-//     console.log(req.cookies);
-//     next();
-// });
-
-// app.get("/", (req, res, next) => {
-//     res.send('<form action="/app"> <input type="submit" value="Go to application" /> </form>');
-// });
-
 app.get("/app", secured, (req, res, next) => {
-    // console.log("----------------------");
-    // console.log(req.user);
     res.send("You made it!");
-    // res.redirect("localhost:8080/home");
 });
 
 app.get("/failure", (req, res, next) => {
@@ -130,18 +123,13 @@ app.get("/failure", (req, res, next) => {
 
 // Graphql
 
-// app.use('/graphql', (req, res, next) => {
-//     console.log(req.body.query)
-//     console.log(req.body.variables)
-//     return next()
-// })
-
-app.use("/graphql", (req, res, next) => {
+app.use("/graphql", secured, (req, res, next) => {
     // if (req.body.userID) {
     //     // @ts-expect-error
     //     req.body.userID = req.user.id;
     // }
-    console.log(req.cookies);
+    // console.log(req.isAuthenticated());
+    // console.log(req.user);
     next();
 });
 
@@ -150,9 +138,10 @@ const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({ prisma, req }),
+    context: (expressContext) => ({ prisma, req: expressContext.req }),
 });
 
+// CORS Fix: https://stackoverflow.com/a/54589681
 server.applyMiddleware({ app, cors: corsOptions });
 
 // Demo route
