@@ -80,6 +80,10 @@ if (process.env.NODE_ENV == "production") {
 
 app.use(expressSession(session));
 
+// app.use('*', (req, res, next)=>{
+//     req.sessions
+// })
+
 // app.use(cookieParser());
 
 // app.use(cookieParser(process.env.SESSION_SECRET));
@@ -122,10 +126,12 @@ app.get("/failure", (req, res, next) => {
     res.send("Login unsuccessful");
 });
 
-// app.get("/userid", secured, (req, res, next) => {
-//     // @ts-expect-error
-//     res.send(req.user.id);
-// });
+// Utility function to check if user is logged in
+app.get("/loggedIn", (req, res, next) => {
+    res.send({
+        loggedIn: req.user !== undefined,
+    });
+});
 
 // Graphql
 
@@ -145,6 +151,11 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     context: (expressContext) => ({ prisma, req: expressContext.req }),
+    playground: {
+        settings: {
+            "request.credentials": "include", //https://github.com/graphql/graphql-playground/issues/748#issuecomment-461422943
+        },
+    },
 });
 
 // CORS Fix: https://stackoverflow.com/a/54589681
@@ -152,7 +163,7 @@ server.applyMiddleware({ app, cors: corsOptions });
 
 // Demo route
 app.use("/hi", (req, res) => {
-    console.log(req.cookies);
+    // console.log(req.cookies);
     res.status(200);
     res.send({ message: "hello" });
 });

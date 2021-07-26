@@ -88,6 +88,11 @@ app.get("/app", auth_1.secured, (req, res, next) => {
 app.get("/failure", (req, res, next) => {
     res.send("Login unsuccessful");
 });
+app.get("/loggedIn", (req, res, next) => {
+    res.send({
+        loggedIn: req.user !== undefined,
+    });
+});
 app.use("/graphql", auth_1.secured, (req, res, next) => {
     next();
 });
@@ -96,10 +101,14 @@ const server = new apollo_server_express_1.ApolloServer({
     typeDefs,
     resolvers: resolvers_1.resolvers,
     context: (expressContext) => ({ prisma: exports.prisma, req: expressContext.req }),
+    playground: {
+        settings: {
+            "request.credentials": "include",
+        },
+    },
 });
 server.applyMiddleware({ app, cors: corsOptions });
 app.use("/hi", (req, res) => {
-    console.log(req.cookies);
     res.status(200);
     res.send({ message: "hello" });
 });

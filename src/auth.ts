@@ -58,7 +58,7 @@ router.get(
                 // @ts-ignore
                 username: req.user!.name,
             }),
-            { httpOnly: false, maxAge: 1000 * 60 * 5 }
+            { maxAge: 1000 * 60 * 5 }
         );
 
         // console.log(req.session);
@@ -95,8 +95,15 @@ export function secured(req: get_route_type[0], res: get_route_type[1], next: ge
     if (req.user || req.isAuthenticated()) {
         return next();
     } else {
-        req.session.returnTo = req.originalUrl;
-        res.redirect("/login");
+        res.send({
+            errors: [
+                {
+                    message: "User authentication failure",
+                },
+            ],
+        });
+        // req.session.returnTo = req.originalUrl;
+        // res.redirect("/login");
         // next();
     }
 }

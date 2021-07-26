@@ -64,7 +64,7 @@ router.get("/callback", passport_1.default.authenticate("auth0", { failureRedire
     res.cookie("session-details", JSON.stringify({
         loggedIn: true,
         username: req.user.name,
-    }), { httpOnly: false, maxAge: 1000 * 60 * 5 });
+    }), { maxAge: 1000 * 60 * 5 });
     res.redirect("http://localhost:8080/home");
 });
 router.get("/logout", (req, res, next) => {
@@ -88,8 +88,13 @@ function secured(req, res, next) {
         return next();
     }
     else {
-        req.session.returnTo = req.originalUrl;
-        res.redirect("/login");
+        res.send({
+            errors: [
+                {
+                    message: "User authentication failure",
+                },
+            ],
+        });
     }
 }
 exports.secured = secured;
