@@ -60,7 +60,9 @@ passport_1.default.serializeUser((user, done) => done(null, user));
 passport_1.default.deserializeUser((user, done) => done(null, user));
 const router = express_1.Router();
 router.get("/login", passport_1.default.authenticate("auth0", { scope: ["openid", "email", "profile"] }));
-router.get("/callback", passport_1.default.authenticate("auth0", { failureRedirect: "/failure" }), (req, res, next) => {
+router.get("/callback", (req, res, next) => {
+    console.log(req.session), next();
+}, passport_1.default.authenticate("auth0", { failureRedirect: "/failure" }), (req, res, next) => {
     res.cookie("session-details", JSON.stringify({
         loggedIn: true,
         username: req.user.name,

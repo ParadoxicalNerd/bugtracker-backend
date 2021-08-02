@@ -45,6 +45,9 @@ router.get("/login", passport.authenticate("auth0", { scope: ["openid", "email",
 
 router.get(
     "/callback",
+    (req, res, next) => {
+        console.log(req.session), next();
+    },
     passport.authenticate("auth0", { failureRedirect: "/failure" }),
     (req, res, next) => {
         // res.redirect("/home");
