@@ -40,11 +40,15 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "start": "concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
+    "start": "node dist/index.js",
     "migrate": "npx prisma migrate dev --name",
     "codegen": "graphql-codegen --config codegen.yml",
     "postgres": "sudo service postgresql start",
     "redis": "sudo service redis-server start",
-    "studio": "yarn prisma studio"
+    "studio": "yarn prisma studio",
+    "web": "node dist/index.js"
+  },
+  "engines": {
+    "node": "16.5.0"
   }
 }
