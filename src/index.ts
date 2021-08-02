@@ -16,7 +16,7 @@ const path = require("path");
 
 dotenv.config();
 
-const PORT = process.env.port || 4000;
+const PORT = process.env.PORT || 4001;
 
 export const prisma = new PrismaClient();
 

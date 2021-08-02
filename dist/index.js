@@ -37,7 +37,7 @@ const resolvers_1 = require("./resolvers");
 const fs = require("fs");
 const path = require("path");
 dotenv_1.default.config();
-const PORT = process.env.port || 4000;
+const PORT = process.env.PORT || 4001;
 exports.prisma = new client_1.PrismaClient();
 const app = express_1.default();
 app.use(morgan_1.default("dev"));
