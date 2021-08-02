@@ -45,7 +45,11 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({
     extended: true,
 }));
-const corsAllowList = ["http://localhost:8080", "http://localhost:4000"];
+const corsAllowList = [
+    "http://localhost:8080",
+    "http://localhost:4000",
+    "https://shielded-eyrie-87302.herokuapp.com/",
+];
 const corsOptions = (req, cb) => {
     const options = {
         credentials: true,

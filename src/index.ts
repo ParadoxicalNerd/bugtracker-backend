@@ -34,7 +34,11 @@ app.use(
 
 // CORS
 
-const corsAllowList = ["http://localhost:8080", "http://localhost:4000"];
+const corsAllowList = [
+    "http://localhost:8080",
+    "http://localhost:4000",
+    "https://shielded-eyrie-87302.herokuapp.com/",
+];
 
 const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
     const options: cors.CorsOptions = {
