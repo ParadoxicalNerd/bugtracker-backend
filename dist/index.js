@@ -23,18 +23,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prisma = void 0;
-const apollo_server_express_1 = require("apollo-server-express");
 const client_1 = require("@prisma/client");
+const apollo_server_express_1 = require("apollo-server-express");
+const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
+const express_session_1 = __importDefault(require("express-session"));
+const ioredis_1 = __importDefault(require("ioredis"));
+const morgan_1 = __importDefault(require("morgan"));
+const passport_1 = __importDefault(require("passport"));
+const auth_1 = __importStar(require("./auth"));
+const resolvers_1 = require("./resolvers");
 const fs = require("fs");
 const path = require("path");
-const dotenv_1 = __importDefault(require("dotenv"));
-const morgan_1 = __importDefault(require("morgan"));
-const cors_1 = __importDefault(require("cors"));
-const express_session_1 = __importDefault(require("express-session"));
-const passport_1 = __importDefault(require("passport"));
-const resolvers_1 = require("./resolvers");
-const auth_1 = __importStar(require("./auth"));
 dotenv_1.default.config();
 const PORT = process.env.port || 4000;
 exports.prisma = new client_1.PrismaClient();
@@ -58,9 +59,8 @@ const corsOptions = (req, cb) => {
     cb(null, options);
 };
 app.use(cors_1.default(corsOptions));
-const ioredis_1 = __importDefault(require("ioredis"));
 const RedisStore = require("connect-redis")(express_session_1.default);
-const redisClient = new ioredis_1.default();
+const redisClient = new ioredis_1.default(process.env.REDIS_URL);
 const session = {
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || "supersecretkey",

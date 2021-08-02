@@ -1,18 +1,18 @@
-import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
 import { PrismaClient } from "@prisma/client";
+import { ApolloServer } from "apollo-server-express";
+import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
+import expressSession from "express-session";
+// Session Config
+import Redis from "ioredis";
+import morgan from "morgan";
+import passport from "passport";
+import authRouter, { secured } from "./auth";
+import { resolvers } from "./resolvers";
 
 const fs = require("fs");
 const path = require("path");
-import dotenv from "dotenv";
-import morgan from "morgan";
-import cors from "cors";
-
-import expressSession from "express-session";
-import passport from "passport";
-
-import { resolvers } from "./resolvers";
-import authRouter, { secured } from "./auth";
 
 dotenv.config();
 
@@ -52,12 +52,8 @@ const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
 
 app.use(cors(corsOptions));
 
-// Session Config
-
-import Redis from "ioredis";
-
 const RedisStore = require("connect-redis")(expressSession);
-const redisClient = new Redis();
+const redisClient = new Redis(process.env.REDIS_URL);
 
 const session: expressSession.SessionOptions = {
     store: new RedisStore({ client: redisClient }),
