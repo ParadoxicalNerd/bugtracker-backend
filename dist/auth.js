@@ -23,12 +23,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.secured = void 0;
-const express_1 = __importStar(require("express"));
-const passport_auth0_1 = __importDefault(require("passport-auth0"));
-const passport_1 = __importDefault(require("passport"));
-const index_1 = require("./index");
 const client_1 = require("@prisma/client");
+const express_1 = __importStar(require("express"));
+const passport_1 = __importDefault(require("passport"));
+const passport_auth0_1 = __importDefault(require("passport-auth0"));
 const qs_1 = __importDefault(require("qs"));
+const index_1 = require("./index");
 const strategy = new passport_auth0_1.default({
     domain: process.env.AUTH0_DOMAIN,
     clientID: process.env.AUTH0_CLIENT_ID,
@@ -65,7 +65,7 @@ router.get("/callback", passport_1.default.authenticate("auth0", { failureRedire
         loggedIn: true,
         username: req.user.name,
     }), { maxAge: 1000 * 60 * 5 });
-    res.redirect("http://localhost:8080/home");
+    res.send("Looks good!");
 });
 router.get("/logout", (req, res, next) => {
     req.logout();

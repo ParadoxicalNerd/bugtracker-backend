@@ -1,9 +1,9 @@
-import express, { Router } from "express";
-import Auth0Strategy from "passport-auth0";
-import passport from "passport";
-import { prisma } from "./index";
 import { UserType } from "@prisma/client";
+import express, { Router } from "express";
+import passport from "passport";
+import Auth0Strategy from "passport-auth0";
 import QueryString from "qs";
+import { prisma } from "./index";
 
 const strategy = new Auth0Strategy(
     {
@@ -62,7 +62,8 @@ router.get(
         );
 
         // console.log(req.session);
-        res.redirect("http://localhost:8080/home");
+        // res.redirect("http://localhost:8080/home");
+        res.send("Looks good!");
     }
 );
 
