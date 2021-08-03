@@ -40,19 +40,21 @@ const corsAllowList = [
     "https://shielded-eyrie-87302.herokuapp.com/",
 ];
 
-const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
-    const options: cors.CorsOptions = {
-        credentials: true,
-    };
+// const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
+//     const options: cors.CorsOptions = {
+//         credentials: true,
+//     };
 
-    if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
-        options.origin = true;
-    } else {
-        options.origin = false;
-    }
+//     if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
+//         options.origin = true;
+//     } else {
+//         options.origin = false;
+//     }
 
-    cb(null, options);
-};
+//     cb(null, options);
+// };
+
+const corsOptions = {};
 
 app.use(cors(corsOptions));
 
@@ -80,37 +82,6 @@ if (process.env.NODE_ENV == "production") {
 
 app.use(expressSession(session));
 
-// app.use('*', (req, res, next)=>{
-//     req.sessions
-// })
-
-// app.use(cookieParser());
-
-// app.use(cookieParser(process.env.SESSION_SECRET));
-
-// app.use(
-//     expressSession({
-//         secret: process.env.SESSION_SECRET!,
-//         resave: false,
-//         saveUninitialized: false,
-//         rolling: true,
-//         name: "session-id", // don't use the default session cookie name
-//         // set your options for the session cookie
-//         cookie: {
-//             httpOnly: true,
-//             maxAge: 60 * 60 * 1000, // 60 minutes
-//             // recommended you use this setting in production if you have a well-known domain you want to restrict the cookies to.
-//             // domain: 'your.domain.com',
-//             // recommended you use this setting in production if your site is published using HTTPS
-//             // secure: true,
-//         },
-//     })
-// );
-
-// TODO: Missing session.secure for production env
-
-// app.use(expressSession(session));
-
 // Passport Config
 
 app.use(passport.initialize());
@@ -120,10 +91,6 @@ app.use(authRouter);
 
 app.get("/app", secured, (req, res, next) => {
     res.send("You made it!");
-});
-
-app.get("/failure", (req, res, next) => {
-    res.send("Login unsuccessful");
 });
 
 // Utility function to check if user is logged in
@@ -167,15 +134,5 @@ app.use("/hi", (req, res) => {
     res.status(200);
     res.send({ message: "hello" });
 });
-
-// app.use(express.static(path.join(__dirname, "..", "..", "/bugtracker-fronend/dist/")));
-
-// app.get("/*", function (req, res) {
-//     res.sendFile(path.join(__dirname, "..", "..", "/bugtracker-fronend/dist/"), function (err) {
-//         if (err) {
-//             res.status(500).send(err);
-//         }
-//     });
-// });
 
 app.listen(PORT, () => console.log("🚀 Server ready at: http://localhost:" + PORT));

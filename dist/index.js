@@ -50,18 +50,7 @@ const corsAllowList = [
     "http://localhost:4000",
     "https://shielded-eyrie-87302.herokuapp.com/",
 ];
-const corsOptions = (req, cb) => {
-    const options = {
-        credentials: true,
-    };
-    if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
-        options.origin = true;
-    }
-    else {
-        options.origin = false;
-    }
-    cb(null, options);
-};
+const corsOptions = {};
 app.use(cors_1.default(corsOptions));
 const RedisStore = require("connect-redis")(express_session_1.default);
 const redisClient = new ioredis_1.default(process.env.REDIS_URL);
@@ -87,9 +76,6 @@ app.use(passport_1.default.session());
 app.use(auth_1.default);
 app.get("/app", auth_1.secured, (req, res, next) => {
     res.send("You made it!");
-});
-app.get("/failure", (req, res, next) => {
-    res.send("Login unsuccessful");
 });
 app.get("/loggedIn", (req, res, next) => {
     res.send({

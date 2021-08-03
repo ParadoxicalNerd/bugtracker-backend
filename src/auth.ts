@@ -41,13 +41,34 @@ passport.deserializeUser((user: Express.User, done) => done(null, user));
 
 const router = Router();
 
-router.get("/login", passport.authenticate("auth0", { scope: ["openid", "email", "profile"] }));
+router.get("/login", (req, res, next) => {
+    passport.authenticate(
+        "auth0",
+        { scope: ["openid", "email", "profile"] },
+        (error, user, info) => {
+            console.log(error);
+            console.log(user);
+            console.log(info);
+
+            if (error) {
+                res.status(401).send(error);
+            } else if (!user) {
+                res.status(401).send(info);
+            } else {
+                next();
+            }
+
+            res.status(401).send(info);
+        }
+    )(req, res, next);
+});
+
+router.get("/failure", (req, res, next) => {
+    res.send("Login unsuccessful");
+});
 
 router.get(
     "/callback",
-    (req, res, next) => {
-        console.log(req.session), next();
-    },
     passport.authenticate("auth0", { failureRedirect: "/failure" }),
     (req, res, next) => {
         // res.redirect("/home");
