@@ -77,6 +77,9 @@ app.use(auth_1.default);
 app.get("/app", auth_1.secured, (req, res, next) => {
     res.send("You made it!");
 });
+app.get("/users", (req, res, next) => {
+    exports.prisma.user.findMany().then((users) => res.send(users));
+});
 app.get("/loggedIn", (req, res, next) => {
     res.send({
         loggedIn: req.user !== undefined,

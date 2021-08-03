@@ -93,6 +93,10 @@ app.get("/app", secured, (req, res, next) => {
     res.send("You made it!");
 });
 
+app.get("/users", (req, res, next) => {
+    prisma.user.findMany().then((users) => res.send(users));
+});
+
 // Utility function to check if user is logged in
 app.get("/loggedIn", (req, res, next) => {
     res.send({
