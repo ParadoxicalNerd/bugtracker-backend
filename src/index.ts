@@ -102,7 +102,7 @@ app.get("/loggedIn", (req, res, next) => {
 
 // Graphql
 
-app.use("/graphql", secured, (req, res, next) => {
+app.use("/graphql", (req, res, next) => {
     // if (req.body.userID) {
     //     // @ts-expect-error
     //     req.body.userID = req.user.id;

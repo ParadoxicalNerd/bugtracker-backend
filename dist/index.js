@@ -82,7 +82,7 @@ app.get("/loggedIn", (req, res, next) => {
         loggedIn: req.user !== undefined,
     });
 });
-app.use("/graphql", auth_1.secured, (req, res, next) => {
+app.use("/graphql", (req, res, next) => {
     next();
 });
 const typeDefs = fs.readFileSync(path.join(__dirname, "..", "schema.graphql"), "utf-8");
