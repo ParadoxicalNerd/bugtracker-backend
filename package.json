@@ -40,7 +40,7 @@
     "scripts": {
         "watch": "tsc -w",
         "dev": "nodemon dist/index.js",
-        "start": "prisma generate && node dist/index.js",
+        "start": "prisma db push && node dist/index.js",
         "migrate": "npx prisma migrate dev --name",
         "codegen": "graphql-codegen --config codegen.yml",
         "postgres": "sudo service postgresql start",
