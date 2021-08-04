@@ -78,6 +78,8 @@ if (process.env.NODE_ENV == "production") {
         domain: process.env.DOMAIN,
         secure: true,
     };
+
+    app.set("trust proxy", 1);
 }
 
 app.use(expressSession(session));

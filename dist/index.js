@@ -69,6 +69,7 @@ if (process.env.NODE_ENV == "production") {
         domain: process.env.DOMAIN,
         secure: true,
     };
+    app.set("trust proxy", 1);
 }
 app.use(express_session_1.default(session));
 app.use(passport_1.default.initialize());
