@@ -67,7 +67,6 @@ const session: expressSession.SessionOptions = {
         httpOnly: true,
         maxAge: 1000 * 60 * 5, // Five minutes
         sameSite: "none",
-        domain: "herokuapp.com",
     },
     resave: false,
     saveUninitialized: false,
@@ -76,7 +75,6 @@ const session: expressSession.SessionOptions = {
 
 if (process.env.NODE_ENV == "production") {
     session.cookie = {
-        domain: process.env.DOMAIN,
         secure: true,
         sameSite: "none",
     };
