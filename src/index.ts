@@ -136,4 +136,14 @@ app.use("/hi", (req, res) => {
     res.send({ message: "hello" });
 });
 
+app.use(express.static(path.join(__dirname, "..", "/bugtracker-frontend/build/")));
+
+app.get("/*", function (req, res) {
+    res.sendFile(path.join(__dirname, "..", "/bugtracker-frontend/build/"), function (err) {
+        if (err) {
+            res.status(500).send(err);
+        }
+    });
+});
+
 app.listen(PORT, () => console.log("🚀 Server ready at: http://localhost:" + PORT));

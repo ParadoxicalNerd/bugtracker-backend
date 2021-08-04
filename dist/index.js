@@ -72,7 +72,6 @@ const session = {
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 5,
-        sameSite: "none",
     },
     resave: false,
     saveUninitialized: false,
@@ -80,7 +79,6 @@ const session = {
 };
 if (process.env.NODE_ENV == "production") {
     session.cookie = {
-        domain: process.env.DOMAIN,
         secure: true,
         sameSite: "none",
     };
@@ -116,6 +114,14 @@ server.applyMiddleware({ app, cors: corsOptions });
 app.use("/hi", (req, res) => {
     res.status(200);
     res.send({ message: "hello" });
+});
+app.use(express_1.default.static(path.join(__dirname, "..", "/bugtracker-frontend/build/")));
+app.get("/*", function (req, res) {
+    res.sendFile(path.join(__dirname, "..", "/bugtracker-frontend/build/"), function (err) {
+        if (err) {
+            res.status(500).send(err);
+        }
+    });
 });
 app.listen(PORT, () => console.log("🚀 Server ready at: http://localhost:" + PORT));
 //# sourceMappingURL=index.js.map

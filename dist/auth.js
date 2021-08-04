@@ -83,7 +83,7 @@ router.get("/callback", passport_1.default.authenticate("auth0", { failureRedire
     res.cookie("session-details", JSON.stringify({
         loggedIn: true,
         username: req.user.name,
-    }), { maxAge: 1000 * 60 * 5 });
+    }), { maxAge: 1000 * 60 * 5, secure: true, sameSite: "none" });
     console.log("Login successful");
     res.redirect(process.env.HOMEPAGE_URL || "http://localhost:8080");
 });
