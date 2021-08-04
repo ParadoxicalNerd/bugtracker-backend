@@ -76,9 +76,10 @@ if (process.env.NODE_ENV == "production") {
     session.cookie = {
         domain: process.env.DOMAIN,
         secure: true,
+        sameSite: "none",
     };
 
-    app.set("trust proxy", 1);
+    app.set("trust proxy", 1); // For Heroku
 }
 
 app.use(expressSession(session));
