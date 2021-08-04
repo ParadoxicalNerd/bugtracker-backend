@@ -67,6 +67,7 @@ const session: expressSession.SessionOptions = {
         httpOnly: true,
         maxAge: 1000 * 60 * 5, // Five minutes
         sameSite: "none",
+        domain: "heroku.com",
     },
     resave: false,
     saveUninitialized: false,
