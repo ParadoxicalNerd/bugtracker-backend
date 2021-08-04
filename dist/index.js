@@ -55,6 +55,7 @@ app.use(cors_1.default(corsOptions));
 const RedisStore = require("connect-redis")(express_session_1.default);
 const redisClient = new ioredis_1.default(process.env.REDIS_URL);
 const session = {
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || "supersecretkey",
     cookie: {
         httpOnly: true,

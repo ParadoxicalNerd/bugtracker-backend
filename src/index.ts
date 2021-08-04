@@ -62,7 +62,7 @@ const RedisStore = require("connect-redis")(expressSession);
 const redisClient = new Redis(process.env.REDIS_URL);
 
 const session: expressSession.SessionOptions = {
-    // store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || "supersecretkey",
     cookie: {
         httpOnly: true,

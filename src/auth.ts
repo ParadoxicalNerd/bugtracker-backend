@@ -86,8 +86,9 @@ router.get(
         );
 
         // console.log(req.session);
-        // res.redirect("http://localhost:8080/home");
-        res.send("Looks good!");
+        // res.redirect("http://localhost:8080/home");`
+        console.log("Login successful");
+        res.redirect(process.env.HOMEPAGE_URL || "http://localhost:8080");
     }
 );
 

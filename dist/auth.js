@@ -84,7 +84,8 @@ router.get("/callback", passport_1.default.authenticate("auth0", { failureRedire
         loggedIn: true,
         username: req.user.name,
     }), { maxAge: 1000 * 60 * 5 });
-    res.send("Looks good!");
+    console.log("Login successful");
+    res.redirect(process.env.HOMEPAGE_URL || "http://localhost:8080");
 });
 router.get("/logout", (req, res, next) => {
     req.logout();
