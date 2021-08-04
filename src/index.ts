@@ -66,7 +66,6 @@ const session: expressSession.SessionOptions = {
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 5, // Five minutes
-        sameSite: "none",
     },
     resave: false,
     saveUninitialized: false,
