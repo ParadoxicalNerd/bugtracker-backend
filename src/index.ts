@@ -38,23 +38,22 @@ const corsAllowList = [
     "http://localhost:8080",
     "http://localhost:4000",
     "https://shielded-eyrie-87302.herokuapp.com/",
+    "https://adoring-einstein-d2f852.netlify.app/",
 ];
 
-// const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
-//     const options: cors.CorsOptions = {
-//         credentials: true,
-//     };
+const corsOptions: cors.CorsOptionsDelegate<cors.CorsRequest> = (req, cb) => {
+    const options: cors.CorsOptions = {
+        credentials: true,
+    };
 
-//     if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
-//         options.origin = true;
-//     } else {
-//         options.origin = false;
-//     }
+    if (corsAllowList.indexOf(req.headers.origin || "") !== -1) {
+        options.origin = true;
+    } else {
+        options.origin = false;
+    }
 
-//     cb(null, options);
-// };
-
-const corsOptions = {};
+    cb(null, options);
+};
 
 app.use(cors(corsOptions));
 
