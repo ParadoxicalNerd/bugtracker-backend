@@ -66,6 +66,7 @@ const session: expressSession.SessionOptions = {
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 5, // Five minutes
+        sameSite: "none",
     },
     resave: false,
     saveUninitialized: false,
@@ -78,7 +79,7 @@ if (process.env.NODE_ENV == "production") {
         secure: true,
     };
 
-    app.set("trust proxy", 1);
+    app.set("trust proxy", 1); // For Heroku
 }
 
 app.use(expressSession(session));
