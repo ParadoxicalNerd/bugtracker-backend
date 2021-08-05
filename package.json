@@ -47,8 +47,8 @@
         "redis": "sudo service redis-server start",
         "studio": "yarn prisma studio",
         "web": "node dist/index.js",
-        "prestart": "cd bugtracker-frontend && yarn && yarn build && cd ..",
-        "preweb": "cd bugtracker-frontend && yarn && yarn build && cd .."
+        "poststart": "cd bugtracker-frontend && yarn && yarn build && cd ..",
+        "postweb": "cd bugtracker-frontend && yarn && yarn build && cd .."
     },
     "engines": {
         "node": "16.5.0"
