@@ -46,7 +46,9 @@
         "postgres": "sudo service postgresql start",
         "redis": "sudo service redis-server start",
         "studio": "yarn prisma studio",
-        "web": "node dist/index.js"
+        "web": "node dist/index.js",
+        "prestart": "cd bugtracker-frontend && yarn build && cd ..",
+        "preweb": "cd bugtracker-frontend && yarn build && cd .."
     },
     "engines": {
         "node": "16.5.0"
