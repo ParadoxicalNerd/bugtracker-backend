@@ -1,0 +1,4 @@
+[submodules "bugtracker-frontend"]
+    path = bugtracker-frontend
+    url = https://github.com/ParadoxicalNerd/bugtracker-frontend
+	branch = main
